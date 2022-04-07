@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Coding-Tracker": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\Users\\njnda\\source\\repos\\Coding-Tracker\\Coding-Tracker"
+    }
+  }
+}
