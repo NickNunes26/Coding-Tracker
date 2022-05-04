@@ -1,6 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-using ConsoleTableExt;
+﻿using ConsoleTableExt;
 using Microsoft.Data.Sqlite;
+using Coding_Tracker;
 
 /*
  EXAMPLE OF HOW THE TABLE THING SHOULD WORK. TO DELETE LATER.
@@ -18,6 +18,8 @@ ConsoleTableBuilder
 
 string connectionString = @"Data Source = Coding-Tracker.db";
 
+
+
 using (var connection = new SqliteConnection(connectionString))
 {
 
@@ -25,10 +27,10 @@ using (var connection = new SqliteConnection(connectionString))
     {
 
         tableCmd.CommandText =
-            @"CREATE TABLE IF NOT EXISTS Coding-Tracker (
+            @"CREATE TABLE IF NOT EXISTS Coding_Tracker (
             Id INTEGER PRIMARY KEY AUTOINCREMENT,
-            StartTime TEXT
-            EndTime TEXT
+            StartTime TEXT,
+            FinalTime TEXT,
             Duration REAL
             )";
 
@@ -38,7 +40,14 @@ using (var connection = new SqliteConnection(connectionString))
 
         connection.Close();
 
-        
+        var userInputs = new UserInputs(connection);
+
+        while (userInputs.ExitProgram == false)
+        {
+            userInputs.MainMenu();
+        }
+
+
 
     }
 
