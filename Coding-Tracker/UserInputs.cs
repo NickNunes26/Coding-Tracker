@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using ConsoleTableExt;
 using System.Data;
 using Microsoft.Data.Sqlite;
-using static Coding_Tracker.Validations;
 
 namespace Coding_Tracker
 {
@@ -14,15 +13,17 @@ namespace Coding_Tracker
     {
 
         public bool ExitProgram { get; set; }
-        private readonly SqliteConnection sqliteConnection;
-        private List<DateTime> startDateTimeFromDB = new List<DateTime>();
-        private List<DateTime> finalDateTimeFromDB = new List<DateTime>();
+        public SqliteConnection sqliteConnection { get; set; }
+        private CodingSession codingSession = new CodingSession();
+        private Validations validations = new Validations();
 
         public UserInputs(SqliteConnection sqliteConnectionReceived)
         {
             sqliteConnection = sqliteConnectionReceived;
             ExitProgram = false;
         }
+
+        
 
         //MainMenu receives input from user and sends the user to required action
         public void MainMenu()
@@ -70,10 +71,8 @@ namespace Coding_Tracker
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 DataRow row = table.Rows[i];
-                startDateTimeFromDB.Add(Convert.ToDateTime(row["StartTime"]));
-                finalDateTimeFromDB.Add(Convert.ToDateTime(row["FinalTime"]));
-                Console.WriteLine(row["StartTime"]);
-                Console.WriteLine(row["EndTime"]);
+                codingSession.ListOfStartTimes.Add(Convert.ToDateTime(row["StartTime"]));
+                codingSession.ListOfFinalTimes.Add(Convert.ToDateTime(row["FinalTime"]));
 
             }
 
@@ -98,18 +97,28 @@ namespace Coding_Tracker
 
             int i = 0;
 
-            foreach (DateTime date in finalDateTimeFromDB)
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
             {
-
-                if (dateFromMenu < date && dateFromMenu > startDateTimeFromDB[i])
-                {
-                    Console.WriteLine("The date you've chosen is between two ex");
-                }
-
-                i++;
+                ErrorMenu();
             }
 
 
+        }
+
+        private void ErrorMenu()
+        {
+            Console.WriteLine(string.Format("The date you have entered falls between two other dates: \n {0} & \n {1} \n What would you like to do?", validations.startError, validations.finalError));
+            Console.WriteLine("1. Set my input date to the final date");
+            Console.WriteLine("2. Change my input date");
+            Console.WriteLine("3. Update the starting date as the date I just input");
+            Console.WriteLine("4. Update the final date as the date I just input");
+
+            bool validChoice = false;
+
+            do
+            {
+  
+            } while (validChoice);
         }
 
 

@@ -8,8 +8,12 @@ using Microsoft.Data.Sqlite;
 
 namespace Coding_Tracker
 {
-    static class Validations
+    internal class Validations
     {
+
+        public string startError;
+        public string finalError;
+
         public static bool ValidateUserInput(string userInput)
         {
             if (userInput == "Progress" || userInput == "Exit")
@@ -18,16 +22,44 @@ namespace Coding_Tracker
             return DateTime.TryParse(userInput, out var dateTime);
         }
 
-        public static bool CheckForExistingDate(string dateFromInput, SqliteConnection sqlConnection)
+        public bool CheckForExistingEntry(DateTime dateFromInput, List<DateTime> startTime, List<DateTime> finalTime)
         {
+            int i = 0;
 
-            var command = sqlConnection.CreateCommand();
 
-            command.CommandText = "SELECT count(*) FROM Coding-Tracker WHERE StartTime='" + dateFromInput + "'";
 
-            return true;
+            foreach (DateTime final in finalTime)
+            {
+                if (dateFromInput < final && dateFromInput > startTime[i])
+                {
+                    startError = Convert.ToString(startTime[i]);
+                    finalError = Convert.ToString(final);
+                    return true;
+                }
+                
+                i++;
+            }
+
+            return false;
         }
 
+        public bool CheckForExistingEntry(DateTime startTimeFromInput, DateTime finalTimeFromInput, List<DateTime> startTime, List<DateTime> finalTime)
+        {
+            int i = 0;
+
+
+            foreach(DateTime final in finalTime)
+            {
+                if (finalTimeFromInput > final && startTimeFromInput < startTime[i])
+                {
+                    startError = Convert.ToString(startTime[i]);
+                    finalError = Convert.ToString(final);
+                    return true;
+                }
+            }
+
+            return false;
+        }
 
 
     }
