@@ -36,13 +36,25 @@ namespace Coding_Tracker
             do
             {
                 chosenOption = GetDateOrProgressFromUser();
-            } while (!ValidateUserInput(chosenOption));
+            } while (!validations.ValidateUserInput(chosenOption));
 
+            switch (chosenOption)
+            {
+                case "Progress":
+                    break;
+                case "Exit":
+                    ExitProgram = true;
+                    return;
+            }
 
+            DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
 
-            DirectFlowOfMenu(chosenOption);
+            int i = 0;
 
-
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
+            {
+                ErrorMenu();
+            }
 
         }
 
@@ -84,23 +96,7 @@ namespace Coding_Tracker
         private void DirectFlowOfMenu(string chosenOptionFromMainMenu)
         {
             
-            switch (chosenOptionFromMainMenu)
-            {
-                case "Progress":
-                    break;
-                case "Exit":
-                    ExitProgram = true;
-                    return;
-            }
 
-            DateTime dateFromMenu = Convert.ToDateTime(chosenOptionFromMainMenu);
-
-            int i = 0;
-
-            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
-            {
-                ErrorMenu();
-            }
 
 
         }
@@ -108,17 +104,42 @@ namespace Coding_Tracker
         private void ErrorMenu()
         {
             Console.WriteLine(string.Format("The date you have entered falls between two other dates: \n {0} & \n {1} \n What would you like to do?", validations.startError, validations.finalError));
-            Console.WriteLine("1. Set my input date to the final date");
-            Console.WriteLine("2. Change my input date");
-            Console.WriteLine("3. Update the starting date as the date I just input");
-            Console.WriteLine("4. Update the final date as the date I just input");
+
 
             bool validChoice = false;
 
             do
             {
-  
-            } while (validChoice);
+                ErrorMenuTexts();
+
+                switch (Console.ReadLine())
+                {
+                    case "1":
+                        return;
+                    case "2":
+                        return;
+                    case "3":
+                        return;
+                    case "4":
+                        return;
+                    default:
+                        Console.WriteLine("Please select a valid choice:");
+                        break;
+                }
+
+            } while (!validChoice);
+
+
+
+        }
+
+        static void ErrorMenuTexts()
+        {
+            Console.WriteLine("1. Set my input date to the final date");
+            Console.WriteLine("2. Change my input date");
+            Console.WriteLine("3. Update the starting date as the date I just input");
+            Console.WriteLine("4. Update the final date as the date I just input");
+
         }
 
 

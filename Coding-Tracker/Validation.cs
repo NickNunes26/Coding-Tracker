@@ -14,7 +14,7 @@ namespace Coding_Tracker
         public string startError;
         public string finalError;
 
-        public static bool ValidateUserInput(string userInput)
+        public bool ValidateUserInput(string userInput)
         {
             if (userInput == "Progress" || userInput == "Exit")
                 return true;
