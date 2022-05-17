@@ -20,7 +20,7 @@ namespace Coding_Tracker
 
         }
 
-        void UpdateHoursFromDB()
+        void UpdateHoursFromDB(string updateStartOrFinal, DateTime newTimeFromUser)
         {
 
         }

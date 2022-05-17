@@ -10,8 +10,10 @@ namespace Coding_Tracker
 
     internal class CodingSession
     {
+        public List<int> ListOfIDs { get; set; }
         public List<DateTime> ListOfStartTimes { get; set; }
         public List<DateTime> ListOfFinalTimes { get; set; }
+        public List<double> ListOfDurations { get; set; }
 
 
     }

@@ -61,6 +61,18 @@ namespace Coding_Tracker
             return false;
         }
 
+        public string GetAndValidateInfoFromUser()
+        {
+            string chosenOption;
+            do
+            {
+                Console.WriteLine("Please type a valid date, \"Progress\" to see your current progress or \"Exit\" to quit the program");
+                chosenOption = Console.ReadLine();
+            } while (!ValidateUserInput(chosenOption));
+
+            return chosenOption;
+        }
+
 
     }
 }

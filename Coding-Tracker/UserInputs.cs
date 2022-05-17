@@ -16,6 +16,9 @@ namespace Coding_Tracker
         public SqliteConnection sqliteConnection { get; set; }
         private CodingSession codingSession = new CodingSession();
         private Validations validations = new Validations();
+        public DateTime initialDateTime;
+        public DateTime finalDateTime;
+        private bool returnMainMenu;
 
         public UserInputs(SqliteConnection sqliteConnectionReceived)
         {
@@ -28,49 +31,30 @@ namespace Coding_Tracker
         //MainMenu receives input from user and sends the user to required action
         public void MainMenu()
         {
+            returnMainMenu = false;
 
             CreateListsFromDB();
 
-            string chosenOption;
+            GetStartDate();
 
-            do
-            {
-                chosenOption = GetDateOrProgressFromUser();
-            } while (!validations.ValidateUserInput(chosenOption));
+            if (ExitProgram)
+                return;
 
-            switch (chosenOption)
-            {
-                case "Progress":
-                    break;
-                case "Exit":
-                    ExitProgram = true;
-                    return;
-            }
+            GetFinalDate();
 
-            DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
+            if (ExitProgram)
+                return;
+            
 
-            int i = 0;
-
-            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
-            {
-                ErrorMenu();
-            }
+            
 
         }
 
-        //Request date or choice from the menu
-        private string GetDateOrProgressFromUser()
-        {
-            Console.WriteLine("Please type a valid date, \"Progress\" to see your current progress or \"Exit\" to quit the program");
-            return Console.ReadLine();
-        }
-
-        
         //Create initial list of Start and End dates.
         private void CreateListsFromDB()
         {
 
-            const string query = "SELECT StartTime, FinalTime FROM Coding_Tracker ORDER BY StartTime ASC";
+            const string query = "SELECT Id, StartTime, FinalTime, Duration FROM Coding_Tracker ORDER BY StartTime ASC";
 
             SqliteCommand getDatesCmd = new SqliteCommand(query, sqliteConnection);
 
@@ -83,8 +67,10 @@ namespace Coding_Tracker
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 DataRow row = table.Rows[i];
+                codingSession.ListOfIDs.Add(Convert.ToInt32(row["Id"]));
                 codingSession.ListOfStartTimes.Add(Convert.ToDateTime(row["StartTime"]));
                 codingSession.ListOfFinalTimes.Add(Convert.ToDateTime(row["FinalTime"]));
+                codingSession.ListOfDurations.Add(Convert.ToDouble(row["Duration"]));
 
             }
 
@@ -93,14 +79,70 @@ namespace Coding_Tracker
 
         }
 
-        private void DirectFlowOfMenu(string chosenOptionFromMainMenu)
+        private string GetStartDate()
         {
-            
+            string chosenOption = validations.GetAndValidateInfoFromUser();
 
+            switch (chosenOption)
+            {
+                case "Exit":
+                    ExitProgram = true;
+                    return chosenOption;
+                case "Progress":
+                    return chosenOption;
+            }
 
+            DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
+
+            //This block checks if the date from the input falls between two existing dates.
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
+            {
+                ErrorMenu();
+                if (returnMainMenu)
+                    return "Main Menu";
+
+            }
+            else
+            {
+                initialDateTime = dateFromMenu;
+                return chosenOption;
+            }
+        }
+
+        private void GetFinalDate()
+        {
+            Console.WriteLine("Please select a final date and time to log activity");
+
+            string chosenOption = validations.GetAndValidateInfoFromUser();
+
+            switch (chosenOption)
+            {
+                case "Progress":
+                    break;
+                case "Exit":
+                    ExitProgram = true;
+                    return;
+            }
+
+            DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
+
+            //This block checks if the date from the input falls between two existing dates.
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
+            {
+                ErrorMenu();
+                if (returnMainMenu)
+                    return;
+
+            }
+            else
+            {
+                finalDateTime = dateFromMenu;
+            }
 
         }
 
+
+        //This block receives the error and redirects the user accordingly
         private void ErrorMenu()
         {
             Console.WriteLine(string.Format("The date you have entered falls between two other dates: \n {0} & \n {1} \n What would you like to do?", validations.startError, validations.finalError));
@@ -115,8 +157,10 @@ namespace Coding_Tracker
                 switch (Console.ReadLine())
                 {
                     case "1":
+                        initialDateTime = Convert.ToDateTime(validations.finalError);
                         return;
                     case "2":
+                        returnMainMenu = true;
                         return;
                     case "3":
                         return;
