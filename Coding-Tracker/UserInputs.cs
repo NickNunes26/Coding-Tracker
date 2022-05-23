@@ -19,11 +19,13 @@ namespace Coding_Tracker
         public DateTime initialDateTime;
         public DateTime finalDateTime;
         private bool returnMainMenu;
+        private CodingController controller;
 
         public UserInputs(SqliteConnection sqliteConnectionReceived)
         {
             sqliteConnection = sqliteConnectionReceived;
             ExitProgram = false;
+            controller = new CodingController(sqliteConnection);
         }
 
         
@@ -35,18 +37,22 @@ namespace Coding_Tracker
 
             CreateListsFromDB();
 
-            GetStartDate();
+            string startDate = GetStartDate();
 
-            if (ExitProgram)
+            if (ExitProgram || returnMainMenu)
                 return;
 
-            GetFinalDate();
+            if (startDate == "Progress")
+                controller.CreateTable();
 
-            if (ExitProgram)
+            string finalDate = GetFinalDate();
+
+            if (ExitProgram || returnMainMenu)
                 return;
-            
 
-            
+            if (finalDate == "Progress")
+                controller.CreateTable();
+
 
         }
 
@@ -81,6 +87,8 @@ namespace Coding_Tracker
 
         private string GetStartDate()
         {
+            Console.WriteLine("Please select a initial date and time to log activity");
+
             string chosenOption = validations.GetAndValidateInfoFromUser();
 
             switch (chosenOption)
@@ -90,6 +98,9 @@ namespace Coding_Tracker
                     return chosenOption;
                 case "Progress":
                     return chosenOption;
+                case "Start Watch":
+                    initialDateTime = DateTime.Now;
+                    return Convert.ToString(initialDateTime);
             }
 
             DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
@@ -97,7 +108,7 @@ namespace Coding_Tracker
             //This block checks if the date from the input falls between two existing dates.
             if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
             {
-                ErrorMenu();
+                ErrorMenu(dateFromMenu);
                 if (returnMainMenu)
                     return "Main Menu";
 
@@ -107,9 +118,12 @@ namespace Coding_Tracker
                 initialDateTime = dateFromMenu;
                 return chosenOption;
             }
+
+            return chosenOption;
+
         }
 
-        private void GetFinalDate()
+        private string GetFinalDate()
         {
             Console.WriteLine("Please select a final date and time to log activity");
 
@@ -118,10 +132,13 @@ namespace Coding_Tracker
             switch (chosenOption)
             {
                 case "Progress":
-                    break;
+                    return chosenOption;
                 case "Exit":
                     ExitProgram = true;
-                    return;
+                    return chosenOption;
+                case "Stop Watch":
+                    finalDateTime = DateTime.Now;
+                    return Convert.ToString(finalDateTime);
             }
 
             DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
@@ -129,22 +146,25 @@ namespace Coding_Tracker
             //This block checks if the date from the input falls between two existing dates.
             if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
             {
-                ErrorMenu();
+                ErrorMenu(dateFromMenu);
                 if (returnMainMenu)
-                    return;
+                    return "Main Menu";
 
             }
             else
             {
                 finalDateTime = dateFromMenu;
+                return chosenOption;
             }
+
+            return chosenOption;
 
         }
 
-
         //This block receives the error and redirects the user accordingly
-        private void ErrorMenu()
+        private void ErrorMenu(DateTime dateFromMenu)
         {
+
             Console.WriteLine(string.Format("The date you have entered falls between two other dates: \n {0} & \n {1} \n What would you like to do?", validations.startError, validations.finalError));
 
 
@@ -163,8 +183,12 @@ namespace Coding_Tracker
                         returnMainMenu = true;
                         return;
                     case "3":
+                        controller.UpdateHoursFromDB(dateFromMenu, validations.startError, true);
+                        returnMainMenu = true;
                         return;
                     case "4":
+                        controller.UpdateHoursFromDB(dateFromMenu, validations.finalError, false);
+                        returnMainMenu = true;
                         return;
                     default:
                         Console.WriteLine("Please select a valid choice:");
