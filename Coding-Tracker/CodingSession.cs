@@ -10,10 +10,10 @@ namespace Coding_Tracker
 
     internal class CodingSession
     {
-        public List<int> ListOfIDs { get; set; }
-        public List<DateTime> ListOfStartTimes { get; set; }
-        public List<DateTime> ListOfFinalTimes { get; set; }
-        public List<double> ListOfDurations { get; set; }
+        public List<int> ListOfIDs { get; set; } = new List<int>();
+        public List<DateTime> ListOfStartTimes { get; set; } = new List<DateTime>();
+        public List<DateTime> ListOfFinalTimes { get; set; } = new List<DateTime>();
+        public List<double> ListOfDurations { get; set; } = new List<double>();
 
 
     }

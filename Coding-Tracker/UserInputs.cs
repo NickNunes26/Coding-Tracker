@@ -28,7 +28,7 @@ namespace Coding_Tracker
             controller = new CodingController(sqliteConnection);
         }
 
-        
+
 
         //MainMenu receives input from user and sends the user to required action
         public void MainMenu()
@@ -43,7 +43,7 @@ namespace Coding_Tracker
                 return;
 
             if (startDate == "Progress")
-                controller.CreateTable();
+                controller.CreateTable(codingSession);
 
             string finalDate = GetFinalDate();
 
@@ -52,6 +52,35 @@ namespace Coding_Tracker
 
             if (finalDate == "Progress")
                 controller.CreateTable();
+
+            if (finalDateTime < initialDateTime)
+            {
+                Console.WriteLine("The time you entered as your final is before the time you set as your starting time. Would you like to have them reversed or go back to the Main Menu?");
+                Console.WriteLine("Reversed / Main Menu / Exit");
+                bool validChoice = false;
+                do
+                {
+                    var read = Console.ReadLine();
+
+                    switch (read)
+                    {
+                        case "Reversed":
+                            controller.AddHoursToDB(initialDateTime, finalDateTime);
+                            return;
+                        case "Main Menu":
+                            return;
+                        case "Exit":
+                            ExitProgram = true;
+                            return;
+                        default:
+                            Console.WriteLine("Please select a valid choice");
+                            break;
+                    }
+
+                } while (!validChoice);
+            }
+
+            controller.AddHoursToDB(initialDateTime, finalDateTime);
 
 
         }
@@ -87,7 +116,6 @@ namespace Coding_Tracker
 
         private string GetStartDate()
         {
-            Console.WriteLine("Please select a initial date and time to log activity");
 
             string chosenOption = validations.GetAndValidateInfoFromUser();
 

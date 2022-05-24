@@ -26,6 +26,8 @@ namespace Coding_Tracker
         {
             int i = 0;
 
+            if (finalTime == null)
+                return false;
 
 
             foreach (DateTime final in finalTime)
@@ -47,8 +49,11 @@ namespace Coding_Tracker
         {
             int i = 0;
 
+            if (finalTime == null)
+                return false;
 
-            foreach(DateTime final in finalTime)
+
+            foreach (DateTime final in finalTime)
             {
                 if (finalTimeFromInput > final && startTimeFromInput < startTime[i])
                 {
