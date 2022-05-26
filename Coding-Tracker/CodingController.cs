@@ -42,10 +42,6 @@ namespace Coding_Tracker
 
         }
 
-        void RemoveHoursFromDB()
-        {
-
-        }
 
         public void UpdateHoursFromDB(DateTime newTimeFromUser, string dateToBeReplaced, bool isTheStartDate)
         {
@@ -75,16 +71,15 @@ namespace Coding_Tracker
 
         public void CreateTable(CodingSession codingSession)
         {
-            /*
-            var tableData = new List<List<object>>
+            
+            var tableData = new List<CodingSession>
             {
-                codingSession.ListOfIDs;
+                codingSession
 
             };
 
-
             ConsoleTableBuilder.From(tableData).ExportAndWriteLine();
-            */
+            
         }
 
 

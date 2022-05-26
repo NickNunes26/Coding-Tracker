@@ -14,7 +14,7 @@ namespace Coding_Tracker
 
         public bool ExitProgram { get; set; }
         public SqliteConnection sqliteConnection { get; set; }
-        private CodingSession codingSession = new CodingSession();
+        private List<CodingSession> codingSession = new List<CodingSession>();
         private Validations validations = new Validations();
         public DateTime initialDateTime;
         public DateTime finalDateTime;
@@ -51,7 +51,7 @@ namespace Coding_Tracker
                 return;
 
             if (finalDate == "Progress")
-                controller.CreateTable();
+                controller.CreateTable(codingSession);
 
             if (finalDateTime < initialDateTime)
             {
@@ -65,7 +65,7 @@ namespace Coding_Tracker
                     switch (read)
                     {
                         case "Reversed":
-                            controller.AddHoursToDB(initialDateTime, finalDateTime);
+                            controller.AddHoursToDB(finalDateTime, initialDateTime);
                             return;
                         case "Main Menu":
                             return;
@@ -102,10 +102,17 @@ namespace Coding_Tracker
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 DataRow row = table.Rows[i];
-                codingSession.ListOfIDs.Add(Convert.ToInt32(row["Id"]));
-                codingSession.ListOfStartTimes.Add(Convert.ToDateTime(row["StartTime"]));
-                codingSession.ListOfFinalTimes.Add(Convert.ToDateTime(row["FinalTime"]));
-                codingSession.ListOfDurations.Add(Convert.ToDouble(row["Duration"]));
+
+                codingSession.Add(
+                    new CodingSession
+                    {
+                        Id = Convert.ToInt32(row["Id"]),
+                        StartTime = Convert.ToString(row["StartTime"]),
+                        FinalTime = Convert.ToString(row["FinalTime"]),
+                        Duration = Convert.ToDouble(row["Duration"])
+
+                    });
+
 
             }
 
@@ -134,7 +141,7 @@ namespace Coding_Tracker
             DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
 
             //This block checks if the date from the input falls between two existing dates.
-            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession))
             {
                 ErrorMenu(dateFromMenu);
                 if (returnMainMenu)
@@ -172,7 +179,7 @@ namespace Coding_Tracker
             DateTime dateFromMenu = Convert.ToDateTime(chosenOption);
 
             //This block checks if the date from the input falls between two existing dates.
-            if (validations.CheckForExistingEntry(dateFromMenu, codingSession.ListOfStartTimes, codingSession.ListOfFinalTimes))
+            if (validations.CheckForExistingEntry(dateFromMenu, codingSession))
             {
                 ErrorMenu(dateFromMenu);
                 if (returnMainMenu)

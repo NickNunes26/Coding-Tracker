@@ -22,11 +22,11 @@ namespace Coding_Tracker
             return DateTime.TryParse(userInput, out var dateTime);
         }
 
-        public bool CheckForExistingEntry(DateTime dateFromInput, List<DateTime> startTime, List<DateTime> finalTime)
+        public bool CheckForExistingEntry(DateTime dateFromInput, List<CodingSession> codingSession)
         {
             int i = 0;
 
-            if (finalTime == null)
+            if (codingSession == null)
                 return false;
 
 
