@@ -30,12 +30,12 @@ namespace Coding_Tracker
                 return false;
 
 
-            foreach (DateTime final in finalTime)
+            foreach (CodingSession session in codingSession)
             {
-                if (dateFromInput < final && dateFromInput > startTime[i])
+                if (dateFromInput < Convert.ToDateTime(session.FinalTime) && dateFromInput > Convert.ToDateTime(session.StartTime))
                 {
-                    startError = Convert.ToString(startTime[i]);
-                    finalError = Convert.ToString(final);
+                    startError = session.StartTime;
+                    finalError = session.FinalTime;
                     return true;
                 }
                 
@@ -45,20 +45,20 @@ namespace Coding_Tracker
             return false;
         }
 
-        public bool CheckForExistingEntry(DateTime startTimeFromInput, DateTime finalTimeFromInput, List<DateTime> startTime, List<DateTime> finalTime)
+        public bool CheckForExistingEntry(DateTime startTimeFromInput, DateTime finalTimeFromInput, List<CodingSession> codingSession)
         {
             int i = 0;
 
-            if (finalTime == null)
+            if (codingSession == null)
                 return false;
 
 
-            foreach (DateTime final in finalTime)
+            foreach (CodingSession session in codingSession)
             {
-                if (finalTimeFromInput > final && startTimeFromInput < startTime[i])
+                if (finalTimeFromInput > Convert.ToDateTime(session.FinalTime) && startTimeFromInput < Convert.ToDateTime(session.StartTime))
                 {
-                    startError = Convert.ToString(startTime[i]);
-                    finalError = Convert.ToString(final);
+                    startError = session.StartTime;
+                    finalError = session.FinalTime;
                     return true;
                 }
             }

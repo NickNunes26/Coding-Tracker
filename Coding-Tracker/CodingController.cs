@@ -49,12 +49,12 @@ namespace Coding_Tracker
 
             if (isTheStartDate)
             {
-                query = @"UPDATE Coding_Tracker SET StartTime = " + Convert.ToString(newTimeFromUser) + " WHERE StartTime = '" + dateToBeReplaced + "'";
+                query = @"UPDATE Coding_Tracker SET StartTime = '" + Convert.ToString(newTimeFromUser) + "' WHERE StartTime = '" + dateToBeReplaced + "'";
 
             }
             else
             {
-                query = @"UPDATE Coding_Tracker SET FinalTime = " + Convert.ToString(newTimeFromUser) + " WHERE FinalTime = '" + dateToBeReplaced + "'";
+                query = @"UPDATE Coding_Tracker SET FinalTime = '" + Convert.ToString(newTimeFromUser) + "' WHERE FinalTime = '" + dateToBeReplaced + "'";
             }
             
 
@@ -69,14 +69,10 @@ namespace Coding_Tracker
             sqliteConnection.Close();
         }
 
-        public void CreateTable(CodingSession codingSession)
+        public void CreateTable(List<CodingSession> codingSession)
         {
-            
-            var tableData = new List<CodingSession>
-            {
-                codingSession
 
-            };
+            var tableData = codingSession;
 
             ConsoleTableBuilder.From(tableData).ExportAndWriteLine();
             
